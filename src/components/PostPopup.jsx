@@ -1,49 +1,30 @@
-import React from 'react'
-import DaumPostcode from 'react-daum-postcode'
+import React from "react";
+import DaumPostcode from "react-daum-postcode";
 
-const PostPopup = () => {
-    const el = document.getElementById('popupDom');
-    return ReactDOM.createPortal(children, el);
-};
+const Post = (props) => {
+  const [isAddress, setIsAddress] = useState("");
+  const [isZoneCode, setIsZoneCode] = useState();
 
-export default PostPopup
-
-
-
-export const PostPopup = (props) => {    const handlePostCode = (data) => {
+  const handleComplete = (data) => {
     let fullAddress = data.address;
-    let extraAddress = ''; 
-    
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
         extraAddress += data.bname;
       }
-      if (data.buildingName !== '') {
-        extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
-      fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
-    console.log(data)
-    console.log(fullAddress)
-    console.log(data.zonecode)
-    props.onClose()
-}
-
-const postCodeStyle = {
-    display: "block",
-    position: "absolute",
-    top: "10%",
-    width: "600px",
-    height: "600px",
-    padding: "7px",
+    setIsZoneCode(data.zonecode);
+    setIsAddress(fullAddress);
+    setIsPostOpen(false);
   };
-
-return(
-    <div>
-        <DaumPostcode style={postCodeStyle} onComplete={handlePostCode} />
-        // 닫기 버튼 생성
-        <button type='button' onClick={() => {props.onClose()}} className='postCode_btn'>닫기</button>
-    </div>
-)
 }
 
+
+
+  export default Post;

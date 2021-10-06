@@ -1,15 +1,40 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import ApiService from '../ApiService';
 //import ApiService from '../ApiService';
 const Users = () => {
-  const [data, setData] = useState([]);
+  const [회원목록, setData] = useState([]);
   //useEffect는 비동기적으로 동작
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:8080/api/users`)
+  //     .then(({ data }) => setData(data))
+  //     .catch((err) => { });
+  // }, []);
+
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/users`)
-      .then(({ data }) => setData(data))
-      .catch((err) => { });
-  }, []);
+    console.log("회원목록 불러오기");
+
+    ApiService.getUsers()
+      .then(
+        ({ data }) => setData(data))
+    return () => {
+      console.log("회원목록 불러오기 끝");
+    }
+  },[]);
+  const userList = 회원목록.map((user) => (
+    <tr key={user.usernum}>
+      <td >{user.usernum}</td>
+      <td >{user.username}</td>
+      <td >{user.userid}</td>
+      <td >{user.useremail}</td>
+      <td >{user.userpasswd}</td>
+      <td >{user.addr1}</td>
+      <td >{user.addr2}</td>
+      <td >{user.addr3}</td>
+      <td >{user.usercreatedate}</td>
+    </tr>
+  ));
+
   return (
     <div>
       <h1>회원목록</h1>
@@ -33,19 +58,7 @@ const Users = () => {
             </thead>
             <tbody>
 
-              {data.map(user =>
-                <tr key={user.usernum}>
-                  <td >{user.usernum}</td>
-                  <td >{user.username}</td>
-                  <td >{user.userid}</td>
-                  <td >{user.useremail}</td>
-                  <td >{user.userpasswd}</td>
-                  <td >{user.addr1}</td>
-                  <td >{user.addr2}</td>
-                  <td >{user.addr3}</td>
-                  <td >{user.usercreatedate}</td>
-
-                </tr>)}
+              {userList}
             </tbody>
           </table>
         </div>
