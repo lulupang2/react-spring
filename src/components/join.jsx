@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react'
 import DaumPostcode from 'react-daum-postcode';
 import '../style/join.css'
 import { useEffect } from 'react';
-import { axios } from 'axios';
+import { axios, post } from 'axios';
+
 
 
 
@@ -12,11 +13,11 @@ const Join = () => {
         switch (action.type) {
             case 'ADD_USER':
                 return [...state, {
-                    addr1 : action.user
+                    addr1: action.user
                 }]
-                
+
                 break;
-        
+
             default:
                 break;
         }
@@ -33,10 +34,30 @@ const Join = () => {
     const [useremail, setUseremail] = useState('');
     const [isOpenPost, setIsPostOpen] = useState(false);
 
+    const [inputs, setInputs] = useState({
+        addr1: '',
+        addr2: '',
+        addr3: '',
+        userid: '',
+        username: '',
+        userpasswd: '',
+        useremail: ''
+    })
 
+    const onChange = (e) => {
+        //input에 name을 가진 요소의 value에 이벤트를 걸었다
+        const { name, value } = e.target
+        // 변수를 만들어 이벤트가 발생했을때의 value를 넣어줬다
+        const nextInputs = {
+            //스프레드 문법으로 기존의 객체를 복사한다.
+            ...inputs,
+            [name]: value,
+        }
+        //만든 변수를 seInput으로 변경해준다.
+        setInputs(nextInputs)
 
+    }
 
-    
     const onUserid = (e) => {
         setUserid(e.currentTarget.value);
     };
@@ -91,19 +112,7 @@ const Join = () => {
         setIsPostOpen(false);
     };
 
-    useEffect(() => {
-        axios
-            .post("http://localhost:8080/api/users/new", {
-                addr1 : addr1,
-                addr2 : addr2,
-                addr3: addr3,
-                userid: userid,
-                username: username,
-                userpasswd: userpasswd,
-                useremail: useremail
-            })
-            .then((res) => console.log(res));        
-    }, [])
+
 
     return (
         <div className="form-v6">
@@ -113,18 +122,17 @@ const Join = () => {
 
                     </div>
                     <form className="form-detail">
-                        <DaumPostcode style={postCodeStyle} onComplete={handleComplete} />
 
                         <h2>회원가입</h2>
                         <div className="form-row">
-                            <input type="text" onChange={onUserid} value={userid} name="userid" id="userid" className="input-text" placeholder="아이디를 입력해주세요" />
+                            <input type="text" onChange={onChange} value={userid} name="userid" id="userid" className="input-text" placeholder="아이디를 입력해주세요" />
                         </div>
 
                         <div className="form-row">
-                            <input type="text" onChange={onUsername} value={username} name="username" id="username" className="input-text" placeholder="이름을 입력해주세요" />
+                            <input type="text" onChange={onChange} value={username} name="username" id="username" className="input-text" placeholder="이름을 입력해주세요" />
                         </div>
                         <div className="form-row">
-                            <input type="password" onChange={onUserpasswd} value={userpasswd} name="userpasswd" id="userpasswd" className="input-text"
+                            <input type="password" onChange={onChange} value={userpasswd} name="userpasswd" id="userpasswd" className="input-text"
                                 placeholder="비밀번호를 입력해주세요" />
                         </div>
                         <div className="form-row">
@@ -132,24 +140,25 @@ const Join = () => {
                                 placeholder="비밀번호를 한번 더 입력해주세요" />
                         </div>
                         <div className="form-row">
-                            <input type="text" onChange={onUseremail} value={useremail} name="useremail" id="useremail" className="input-text" placeholder="이메일을 입력해주세요" />
+                            <input type="text" onChange={onChange} value={useremail} name="useremail" id="useremail" className="input-text" placeholder="이메일을 입력해주세요" />
                         </div>
 
                         <div className="form-row">
-                            <input  className="form-control postsearch" placeholder="우편번호"
-                                name="addr1" id="addr1" type="text" disabled onChange={onAddr1} value={addr1} />
-                            <button type="button" className="btn btn-success postsearch" id="postbtn" >
+                            <input className="form-control postsearch" placeholder="우편번호"
+                                name="addr1" id="addr1" type="text" disabled onChange={onChange} value={addr1} />
+                            <button type="button" className="btn btn-success postsearch" id="postbtn" onClick={handleComplete}>
                                 우편번호 찾기</button>
+                                <DaumPostcode style={postCodeStyle} onComplete={handleComplete} />
 
                         </div>
 
                         <div className="form-row">
                             <input className="form-control postsearch" placeholder="도로명 주소" name="addr2" id="addr2"
-                                type="text" disabled onChange={onAddr2} value={addr2} />
+                                type="text" disabled onChange={onChange} value={addr2} />
                         </div>
                         <div className="form-row">
                             <input className="form-control postsearch" placeholder="상세주소" name="addr3" id="addr3"
-                                type="text" onChange={onAddr3} value={addr3}/>
+                                type="text" onChange={onChange} value={addr3} />
                         </div>
                         <div className="form-row-last">
                             <button type="submit" className="btn btn-success input-text" id="submit">가입하기</button>
